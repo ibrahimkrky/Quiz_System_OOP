@@ -12,7 +12,12 @@ public class MultipleChoiceQuestion extends Question {
 
     @Override
     public boolean checkAnswer(String answer) {
-        return false;
+        try {
+            int answerIndex = Integer.parseInt(answer) - 1;
+            return answerIndex == correctOptionIndex;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     public void displayOptions() {
