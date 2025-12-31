@@ -6,6 +6,7 @@ public class Quiz {
     private Difficulty difficulty;
     private String filename;
     private ArrayList<Question> questions;
+    private Student student;
 
     public Quiz(String name, Difficulty difficulty, String filename) {
         this.name = name;
@@ -22,11 +23,18 @@ public class Quiz {
     public Difficulty geDifficulty() {return difficulty;}
     public String getFilename() {return filename;}
     public ArrayList<Question> getQuestions() {return questions;}
+    public void setStudent(Student student) {
+        this.student = student;
+    }
 
     public void start(Scanner scanner) {
-        System.out.println("Sinav Basliyor:" + name);
-        for (Question q :questions) {
-            System.out.println(q.getText());
+        if(student == null) {
+            System.out.println("Ogrenci secilmedi!");
+            return;
+        }
+        System.out.println("Sinav Basliyor: " + name);
+        for (Question q : questions) {
+            System.out.println("SORU: " + q.getText());
         }
     }
 
