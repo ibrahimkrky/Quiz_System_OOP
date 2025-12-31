@@ -22,6 +22,12 @@ public class Quiz {
     public Difficulty geDifficulty() {return difficulty;}
     public String getFilename() {return filename;}
     public ArrayList<Question> getQuestions() {return questions;}
-    
+
+    public void start(Scanner scanner) {
+        System.out.println("Sinav Basliyor:" + name);
+        for (Question q :questions) {
+            System.out.println(q.getText());
+        }
+    }
 
 }
