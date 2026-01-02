@@ -8,7 +8,7 @@ public class AdminPanel {
         this.scanner = scanner;
     }
 
-    public void start() {
+    public void Start() {
         while (true) {
             System.out.println("\n--- YONETICI MENU ---");
             System.out.println("1. Yeni Quiz Olustur");
