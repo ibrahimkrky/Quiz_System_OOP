@@ -1,5 +1,3 @@
 public enum Difficulty {
-    Kolay,
-    orta,
-    Zor
+    Kolay, Orta, Zor;
 }
