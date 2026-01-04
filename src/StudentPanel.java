@@ -8,26 +8,42 @@ public class StudentPanel {
         this.scanner = scanner;
     }
 
-    public void Start() {
+    public void start() {
+        Quiz selectedQuiz = selectQuizFromList();
+        if (selectedQuiz == null) return;
+
+        FileHelper.loadQuestionsForQuiz(selectedQuiz);
+        
+        System.out.print("Ogrenci Adi: ");
+        String name = scanner.nextLine();
+        System.out.print("Ogrenci No: ");
+        String id = scanner.nextLine();
+        
+        selectedQuiz.setStudent(new Student(name, id));
+        selectedQuiz.start(scanner); 
+    }
+
+    private Quiz selectQuizFromList() {
         ArrayList<Quiz> quizzes = FileHelper.loadQuizList();
         if (quizzes.isEmpty()) {
-            System.out.println("Quiz yok.");
-            return;
+            System.out.println("Sistemde kayitli hic quiz yok.");
+            return null;
         }
-        for (int i=0; i < quizzes.size(); i++) System.out.println((i+1) + ". " + quizzes.get(i).getName());
 
-        System.out.print("secim:");
-        int index = Integer.parseInt(scanner.nextLine()) -1;
-        Quiz selectedQuiz = quizzes.get(index);
-
-        FileHelper.loadQuestonsForQuiz(selectedQuiz);
-
-        System.out.print("Adiniz: ");
-        String name = scanner.nextLine();
-        System.out.print("Numaraniz: ");
-        String id = scanner.nextLine();
-
-        selectedQuiz.setStudent(new Student(name, id));
-        selectedQuiz.start(scanner);
+        System.out.println("\n--- MEVCUT SINAVLAR ---");
+        for (int i = 0; i < quizzes.size(); i++) {
+            Quiz q = quizzes.get(i);
+            System.out.println((i+1) + ". " + q.getName() + " [" + q.getDifficulty() + "]");
+        }
+        System.out.print("Seciminiz (Iptal icin 0): ");
+        try {
+            int index = Integer.parseInt(scanner.nextLine()) - 1;
+            if (index == -1) return null;
+            if (index >= 0 && index < quizzes.size()) {
+                return quizzes.get(index);
+            }
+        } catch (NumberFormatException e) {}
+        System.out.println("Gecersiz secim.");
+        return null;
     }
 }

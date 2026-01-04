@@ -4,16 +4,36 @@ public class Main {
     static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        System.out.println("=== QUIZ SISTEMI ===");
+        System.out.println("=== QUIZ SISTEMINE HOSGELDINIZ ===");
+        
         while (true) {
-            System.out.println("1. Ogrenci, 2. Yonetici, 0. Cikis");
-            String choice = scanner.nextLine();
-            if (choice.equals("0")) break;
-            if (choice.equals("1")) new StudentPanel(scanner).Start();
-            else if (choice.equals("2")) {
-                System.out.println("Sifre: ");
-                if(scanner.nextLine().equals("1234")) new AdminPanel(scanner).Start();
+            System.out.println("\nLutfen giris turunu seciniz:");
+            System.out.println("1. Ogrenci Girisi");
+            System.out.println("2. Yonetici Girisi");
+            System.out.println("0. Cikis");
+            System.out.print("Secim: ");
+            String mainChoice = scanner.nextLine();
+
+            if (mainChoice.equals("0")) break;
+
+            if (mainChoice.equals("1")) {
+                StudentPanel studentPanel = new StudentPanel(scanner);
+                studentPanel.start();
+
+            } else if (mainChoice.equals("2")) {
+                if (loginAdmin()) {
+                    AdminPanel adminPanel = new AdminPanel(scanner);
+                    adminPanel.start();
+                } else {
+                    System.out.println("Hatali sifre!");
+                }
             }
         }
+        scanner.close();
+    }
+
+    public static boolean loginAdmin() {
+        System.out.print("Admin Sifresi: ");
+        return scanner.nextLine().equals("1234");
     }
 }

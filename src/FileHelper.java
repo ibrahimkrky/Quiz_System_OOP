@@ -26,9 +26,9 @@ public class FileHelper {
     public static void createQuiz(String name, Difficulty difficulty) {
         String safeName = name.replaceAll("\\s+", "");
         String filename = safeName + "_" + difficulty + ".txt";
-
+        
         String line = name + ";;;" + difficulty + ";;;" + filename;
-
+        
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(QUIZ_LIST_FILE, true))) {
             bw.write(line);
             bw.newLine();
@@ -38,7 +38,7 @@ public class FileHelper {
         }
     }
 
-    public static void loadQuestonsForQuiz (Quiz quiz) {
+    public static void loadQuestionsForQuiz(Quiz quiz) {
         File file = new File(quiz.getFilename());
         if (!file.exists()) return;
 
@@ -46,17 +46,19 @@ public class FileHelper {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(";;;");
+                
                 String type = parts[0];
                 String text = parts[1];
                 int points = Integer.parseInt(parts[2]);
 
-                if ( type.equals("MCQ")) {
+                if (type.equals("MCQ")) {
                     String[] optionsArr = parts[3].split(",");
                     ArrayList<String> options = new ArrayList<>();
                     for (String opt : optionsArr) options.add(opt);
                     int correctIndex = Integer.parseInt(parts[4]);
-
+                    
                     quiz.addQuestion(new MultipleChoiceQuestion(text, points, options, correctIndex));
+
                 } else if (type.equals("TF")) {
                     boolean answer = Boolean.parseBoolean(parts[3]);
                     quiz.addQuestion(new TrueFalseQuestion(text, points, answer));
@@ -95,5 +97,28 @@ public class FileHelper {
                 bw.newLine();
             }
         } catch (IOException e) {}
+    }
+
+    public static void deleteFile(String filename) {
+        File file = new File(filename);
+        if (file.exists()) {
+            if (file.delete()) {
+                System.out.println("-> Quiz dosyasi (" + filename + ") silindi.");
+            } else {
+                System.out.println("-> HATA: Quiz dosyasi silinemedi.");
+            }
+        }
+    }
+
+    public static void updateQuizListFile(ArrayList<Quiz> quizzes) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(QUIZ_LIST_FILE, false))) {
+            for (Quiz q : quizzes) {
+                String line = q.getName() + ";;;" + q.getDifficulty() + ";;;" + q.getFilename();
+                bw.write(line);
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Quiz listesi guncellenemedi: " + e.getMessage());
+        }
     }
 }
