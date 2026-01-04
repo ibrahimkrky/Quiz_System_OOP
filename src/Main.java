@@ -36,4 +36,5 @@ public class Main {
         System.out.print("Admin Sifresi: ");
         return scanner.nextLine().equals("1234");
     }
+    
 }
