@@ -9,7 +9,7 @@ public class AdminPanel {
     }
 
     public void start() {
-        while(true) {
+        while (true) {
             System.out.println("\n--- YONETICI MENU ---");
             System.out.println("1. Yeni Quiz Olustur");
             System.out.println("2. Mevcut Quize Soru Ekle/Duzenle");
@@ -18,7 +18,8 @@ public class AdminPanel {
             System.out.print("Secim: ");
             String choice = scanner.nextLine();
 
-            if (choice.equals("0")) break;
+            if (choice.equals("0"))
+                break;
 
             if (choice.equals("1")) {
                 createNewQuiz();
@@ -27,7 +28,7 @@ public class AdminPanel {
                 if (selectedQuiz != null) {
                     manageQuestions(selectedQuiz);
                 }
-            } else if (choice.equals("3")) { // <--- YENİ BLOK
+            } else if (choice.equals("3")) {
                 deleteQuiz();
             }
         }
@@ -35,8 +36,8 @@ public class AdminPanel {
 
     private void createNewQuiz() {
         System.out.print("Quiz Adi (Orn: Matematik Vize): ");
-        String name = scanner.nextLine();
-        
+        String name = scanner.nextLine().replace(";", "");
+
         System.out.println("Zorluk Seviyesi:");
         System.out.println("1. KOLAY\n2. ORTA\n3. ZOR");
         System.out.print("Secim: ");
@@ -57,23 +58,25 @@ public class AdminPanel {
         System.out.println("\n--- MEVCUT SINAVLAR ---");
         for (int i = 0; i < quizzes.size(); i++) {
             Quiz q = quizzes.get(i);
-            System.out.println((i+1) + ". " + q.getName() + " [" + q.getDifficulty() + "]");
+            System.out.println((i + 1) + ". " + q.getName() + " [" + q.getDifficulty() + "]");
         }
         System.out.print("Seciminiz (Iptal icin 0): ");
         try {
             int index = Integer.parseInt(scanner.nextLine()) - 1;
-            if (index == -1) return null;
+            if (index == -1)
+                return null;
             if (index >= 0 && index < quizzes.size()) {
                 return quizzes.get(index);
             }
-        } catch (NumberFormatException e) {}
+        } catch (NumberFormatException e) {
+        }
         System.out.println("Gecersiz secim.");
         return null;
     }
 
     private void deleteQuiz() {
         ArrayList<Quiz> quizzes = FileHelper.loadQuizList();
-        
+
         if (quizzes.isEmpty()) {
             System.out.println("Silinecek quiz bulunamadi.");
             return;
@@ -82,28 +85,30 @@ public class AdminPanel {
         System.out.println("\n--- SILINECEK QUIZ'I SECINIZ ---");
         for (int i = 0; i < quizzes.size(); i++) {
             Quiz q = quizzes.get(i);
-            System.out.println((i+1) + ". " + q.getName() + " [" + q.getDifficulty() + "]");
+            System.out.println((i + 1) + ". " + q.getName() + " [" + q.getDifficulty() + "]");
         }
-        
+
         System.out.print("Silmek istediginiz numara (Iptal icin 0): ");
         try {
             int index = Integer.parseInt(scanner.nextLine()) - 1;
-            
-            if (index == -1) return;
+
+            if (index == -1)
+                return;
 
             if (index >= 0 && index < quizzes.size()) {
                 Quiz quizToDelete = quizzes.get(index);
-                
-                System.out.print("'" + quizToDelete.getName() + "' quizi ve tum sorulari silinecek. Emin misiniz? (E/H): ");
+
+                System.out.print(
+                        "'" + quizToDelete.getName() + "' quizi ve tum sorulari silinecek. Emin misiniz? (E/H): ");
                 String confirm = scanner.nextLine();
-                
+
                 if (confirm.equalsIgnoreCase("E")) {
                     FileHelper.deleteFile(quizToDelete.getFilename());
-                    
+
                     quizzes.remove(index);
-                    
+
                     FileHelper.updateQuizListFile(quizzes);
-                    
+
                     System.out.println("-> Quiz basariyla silindi.");
                 } else {
                     System.out.println("Silme islemi iptal edildi.");
@@ -117,10 +122,10 @@ public class AdminPanel {
     }
 
     private void manageQuestions(Quiz quiz) {
-        quiz.getQuestions().clear(); 
+        quiz.getQuestions().clear();
         FileHelper.loadQuestionsForQuiz(quiz);
 
-        while(true) {
+        while (true) {
             System.out.println("\n--- " + quiz.getName().toUpperCase() + " SORU YONETIMI ---");
             System.out.println("1. Soru Ekle");
             System.out.println("2. Soru Sil");
@@ -130,10 +135,11 @@ public class AdminPanel {
             System.out.print("Secim: ");
             String choice = scanner.nextLine();
 
-            if (choice.equals("0")) break;
+            if (choice.equals("0"))
+                break;
 
             if (choice.equals("1")) {
-                String data = getQuestionDataFromUser(quiz.getDifficulty());
+                String data = getQuestionDataFromUser();
                 if (data != null) {
                     FileHelper.addLineToQuizFile(quiz.getFilename(), data);
                     System.out.println("-> Soru eklendi.");
@@ -146,8 +152,8 @@ public class AdminPanel {
                 editQuestion(quiz);
             } else if (choice.equals("4")) {
                 System.out.println("\n--- SORU LISTESI ---");
-                for(int i=0; i<quiz.getQuestions().size(); i++) {
-                    System.out.println((i+1) + ". " + quiz.getQuestions().get(i).getText());
+                for (int i = 0; i < quiz.getQuestions().size(); i++) {
+                    System.out.println((i + 1) + ". " + quiz.getQuestions().get(i).getText());
                 }
             }
         }
@@ -155,21 +161,30 @@ public class AdminPanel {
 
     private void deleteQuestion(Quiz quiz) {
         ArrayList<String> lines = FileHelper.loadRawLines(quiz.getFilename());
-        if(lines.isEmpty()) { System.out.println("Silinecek soru yok."); return; }
+        if (lines.isEmpty()) {
+            System.out.println("Silinecek soru yok.");
+            return;
+        }
 
-        for(int i=0; i<lines.size(); i++) System.out.println((i+1) + ". " + lines.get(i).split(";;;")[1]);
-        
+        for (int i = 0; i < lines.size(); i++) {
+            String[] parts = lines.get(i).split(";");
+            if (parts.length > 1) {
+                System.out.println((i + 1) + ". " + parts[1]);
+            }
+        }
+
         System.out.print("Silinecek no: ");
         try {
             int idx = Integer.parseInt(scanner.nextLine()) - 1;
-            if(idx >= 0 && idx < lines.size()) {
+            if (idx >= 0 && idx < lines.size()) {
                 lines.remove(idx);
                 FileHelper.rewriteQuizFile(quiz.getFilename(), lines);
                 System.out.println("Silindi.");
                 quiz.getQuestions().clear();
                 FileHelper.loadQuestionsForQuiz(quiz);
             }
-        } catch(Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     private void editQuestion(Quiz quiz) {
@@ -181,14 +196,17 @@ public class AdminPanel {
 
         System.out.println("\n--- DUZENLENECEK SORUYU SECINIZ ---");
         for (int i = 0; i < lines.size(); i++) {
-            String[] parts = lines.get(i).split(";;;");
-            System.out.println((i + 1) + ". " + parts[1] + " (" + parts[2] + " Puan)");
+            String[] parts = lines.get(i).split(";");
+            if (parts.length > 2) {
+                System.out.println((i + 1) + ". " + parts[1] + " (" + parts[2] + " Puan)");
+            }
         }
-        
+
         System.out.print("Seciminiz (Iptal icin 0): ");
         try {
             int index = Integer.parseInt(scanner.nextLine()) - 1;
-            if (index == -1) return;
+            if (index == -1)
+                return;
 
             if (index >= 0 && index < lines.size()) {
                 String oldLine = lines.get(index);
@@ -217,11 +235,13 @@ public class AdminPanel {
         }
     }
 
-    private String getQuestionDataFromUser(Difficulty quizDiff) {
+    private String getQuestionDataFromUser() {
         System.out.println("1. Coktan Secmeli\n2. Dogru/Yanlis");
         String type = scanner.nextLine();
+
         System.out.print("Soru metni: ");
-        String text = scanner.nextLine();
+        String text = scanner.nextLine().replace(";", "");
+
         System.out.print("Puan: ");
         int points = Integer.parseInt(scanner.nextLine());
 
@@ -229,25 +249,33 @@ public class AdminPanel {
         if (type.equals("1")) {
             StringBuilder opts = new StringBuilder();
             System.out.println("4 Sikki giriniz:");
-            for(int i=0; i<4; i++) {
-                opts.append(scanner.nextLine());
-                if(i<3) opts.append(",");
+            for (int i = 0; i < 4; i++) {
+                System.out.print((i + 1) + ". Sik: ");
+                String opt = scanner.nextLine().replace(";", "");
+                opts.append(opt);
+                if (i < 3)
+                    opts.append(",");
             }
             System.out.print("Dogru sik no (1-4): ");
             int correctIdx = Integer.parseInt(scanner.nextLine()) - 1;
-            sb.append("MCQ;;;").append(text).append(";;;").append(points).append(";;;")
-              .append(opts).append(";;;").append(correctIdx);
+
+            sb.append("MCQ;").append(text).append(";").append(points).append(";")
+                    .append(opts).append(";").append(correctIdx);
+
         } else if (type.equals("2")) {
             System.out.print("Dogru cevap (true/false): ");
             boolean ans = Boolean.parseBoolean(scanner.nextLine());
-            sb.append("TF;;;").append(text).append(";;;").append(points).append(";;;").append(ans);
-        } else return null;
-        
+
+            sb.append("TF;").append(text).append(";").append(points).append(";").append(ans);
+        } else
+            return null;
+
         return sb.toString();
     }
 
     private String editMCQPart(String oldLine) {
-        String[] parts = oldLine.split(";;;");
+        String[] parts = oldLine.split(";");
+
         String text = parts[1];
         int points = Integer.parseInt(parts[2]);
         String optionsStr = parts[3];
@@ -264,29 +292,42 @@ public class AdminPanel {
             System.out.print("Secim: ");
             String choice = scanner.nextLine();
 
-            if (choice.equals("0")) return null;
-            if (choice.equals("5")) break;
+            if (choice.equals("0"))
+                return null;
+            if (choice.equals("5"))
+                break;
 
             switch (choice) {
-                case "1": System.out.print("Yeni Metin: "); text = scanner.nextLine(); break;
-                case "2": System.out.print("Yeni Puan: "); points = Integer.parseInt(scanner.nextLine()); break;
-                case "3": 
+                case "1":
+                    System.out.print("Yeni Metin: ");
+                    text = scanner.nextLine().replace(";", "");
+                    break;
+                case "2":
+                    System.out.print("Yeni Puan: ");
+                    points = Integer.parseInt(scanner.nextLine());
+                    break;
+                case "3":
                     StringBuilder sb = new StringBuilder();
-                    for(int i=0; i<4; i++) {
-                        System.out.print((i+1) + ". Sik: ");
-                        sb.append(scanner.nextLine());
-                        if(i<3) sb.append(",");
+                    for (int i = 0; i < 4; i++) {
+                        System.out.print((i + 1) + ". Sik: ");
+                        String opt = scanner.nextLine().replace(";", "");
+                        sb.append(opt);
+                        if (i < 3)
+                            sb.append(",");
                     }
                     optionsStr = sb.toString();
                     break;
-                case "4": System.out.print("Yeni Dogru Sik (1-4): "); correctIdx = Integer.parseInt(scanner.nextLine()) - 1; break;
+                case "4":
+                    System.out.print("Yeni Dogru Sik (1-4): ");
+                    correctIdx = Integer.parseInt(scanner.nextLine()) - 1;
+                    break;
             }
         }
-        return "MCQ;;;" + text + ";;;" + points + ";;;" + optionsStr + ";;;" + correctIdx;
+        return "MCQ;" + text + ";" + points + ";" + optionsStr + ";" + correctIdx;
     }
 
     private String editTFPart(String oldLine) {
-        String[] parts = oldLine.split(";;;");
+        String[] parts = oldLine.split(";");
         String text = parts[1];
         int points = Integer.parseInt(parts[2]);
         boolean answer = Boolean.parseBoolean(parts[3]);
@@ -301,15 +342,26 @@ public class AdminPanel {
             System.out.print("Secim: ");
             String choice = scanner.nextLine();
 
-            if (choice.equals("0")) return null;
-            if (choice.equals("4")) break;
+            if (choice.equals("0"))
+                return null;
+            if (choice.equals("4"))
+                break;
 
             switch (choice) {
-                case "1": System.out.print("Yeni Metin: "); text = scanner.nextLine(); break;
-                case "2": System.out.print("Yeni Puan: "); points = Integer.parseInt(scanner.nextLine()); break;
-                case "3": System.out.print("Yeni Cevap (true/false): "); answer = Boolean.parseBoolean(scanner.nextLine()); break;
+                case "1":
+                    System.out.print("Yeni Metin: ");
+                    text = scanner.nextLine().replace(";", "");
+                    break;
+                case "2":
+                    System.out.print("Yeni Puan: ");
+                    points = Integer.parseInt(scanner.nextLine());
+                    break;
+                case "3":
+                    System.out.print("Yeni Cevap (true/false): ");
+                    answer = Boolean.parseBoolean(scanner.nextLine());
+                    break;
             }
         }
-        return "TF;;;" + text + ";;;" + points + ";;;" + answer;
+        return "TF;" + text + ";" + points + ";" + answer;
     }
 }

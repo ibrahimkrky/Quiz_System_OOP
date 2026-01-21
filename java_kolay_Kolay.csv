@@ -1,0 +1,3 @@
+MCQ;Java'da hafiza yonetimi ve c�p toplama isini kim yapar?;15;Programci,Garbage Collector (GC),Compiler,Main Method;1
+TF;Java'da bir sinif birden fazla siniftan ayni anda extends (miras) alabilir.;10;false
+MCQ;Asagidakilerden hangisi bir 'Access Modifier' (Erisim Belirleyici) degildir?;10;private,protected,public,static;3
